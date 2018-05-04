@@ -7,33 +7,55 @@ using System.Threading.Tasks;
 
 namespace Task_1
 {
-    public delegate double Functions(double a, double x);
+
+
 
     class Program
     {
+        //создаем делегат
+        public delegate double Functions(double a, double x);
+
+        //метод вывода таблицы для параболы
         public static void Table(Functions f,double a, double initial, double final)
         {
             Console.WriteLine("Значение х | Значение f(x)");
             while (initial <= final)
             {
-                Console.WriteLine(@"{0,8: 0.000} | {1,8: 0.000}", initial, f(a, initial));
+                Console.WriteLine(@"{0,10: 0.000} | {1,10: 0.000}", initial, f(a, initial));
                 initial++;
             }
         }
 
+        //метод вывода таблицы для синусоиды
+        public static void TableSinus(Functions f, double a, double initial, double final)
+        {
+            double initialRad = initial * Math.PI / 180;
+            double finalRad = final * Math.PI / 180;
+
+            Console.WriteLine("Значение х | Значение f(x)");
+            while (initialRad <= finalRad)
+            {
+                Console.WriteLine(@"{0,10: 0.000} | {1,10: 0.000}", initial, f(a, initialRad));
+                initialRad += (10*Math.PI/180);
+                initial += 10;
+            }
+        }
+
+        //задаем параболу
         public static double Parabola(double a, double x)
         {
             return a * x * x;
         }
 
-        static void Main(string[] args)
+        //задаем синусоиду
+        public static double Sinus(double a, double angle)
         {
+            return a * Math.Sin(angle);
+        }
 
-
-            Console.WriteLine(@"Данная программа выводит таблицу значений в заданном интервале для функции 
-f(x) = a * x^2");
-
-            bool correctData = false;
+        //метод считывания параметра "a" (с проверкой на корректность данных)
+        public static double ReadParametr()
+        {
             Regex parameterFormat = new Regex(@"^([-]{0,1}\d+\b)");
 
             Console.Write("Введите значение параметра \"a\" для функции: ");
@@ -46,7 +68,13 @@ f(x) = a * x^2");
                 aString = Console.ReadLine();
             }
 
-            double a = double.Parse(aString);
+            return double.Parse(aString);
+        }
+
+        //метод считывания параметра интервала (с проверкой на корректность данных)
+        public static double[] ReadInterval()
+        {
+            bool correctData = false;
             string[] intervalString = new string[2];
             double[] interval = new double[2];
 
@@ -58,7 +86,7 @@ f(x) = a * x^2");
                 string intervalReaded = Console.ReadLine();
 
                 if (!intervalFormat.IsMatch(intervalReaded))
-                { 
+                {
                     Console.WriteLine("Неверно введен интервал! Попробуйте еще раз.");
                     correctData = false;
                     continue;
@@ -75,6 +103,18 @@ f(x) = a * x^2");
 
             } while (!correctData);
 
+            return interval;
+        }
+
+        //метод выводящий на консоль таблицу значений для пораболы
+        public static void RunProgrammPorabola()
+        {
+            Console.WriteLine(@"Данная программа выводит таблицу значений в заданном интервале для функции 
+f(x) = a * x^2");
+
+            double a = ReadParametr();
+            double[] interval = ReadInterval();
+
             Console.Clear();
 
             if (interval[0] >= interval[1])
@@ -85,9 +125,42 @@ f(x) = a * x^2");
             {
                 Table(new Functions(Parabola), a, interval[0], interval[1]);
             }
-
-            Console.ReadLine();
-            
         }
+
+        //метод выводящий на консоль таблицу значений для синусоиды
+        public static void RunProgrammSinus()
+        {
+            Console.WriteLine(@"Данная программа выводит таблицу значений в заданном интервале для функции 
+f(x) = a * sin(x). Интервал вводится в градусах.");
+
+            double a = ReadParametr();
+            double[] interval = ReadInterval();
+
+            Console.Clear();
+
+            if (interval[0] >= interval[1])
+            {
+                TableSinus(new Functions(Sinus), a, interval[1], interval[0]);
+            }
+            else
+            {
+                TableSinus(new Functions(Sinus), a, interval[0], interval[1]);
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            //вывод в консоль значений параболы
+            RunProgrammPorabola();
+            Console.ReadLine();
+
+            Console.Clear();
+
+            //вывод в консоль значений синусоиды
+            RunProgrammSinus();
+            Console.ReadLine();
+        }
+
+        
     }
 }
