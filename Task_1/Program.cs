@@ -74,35 +74,25 @@ namespace Task_1
         //метод считывания параметра интервала (с проверкой на корректность данных)
         public static double[] ReadInterval()
         {
-            bool correctData = false;
             string[] intervalString = new string[2];
             double[] interval = new double[2];
 
             Regex intervalFormat = new Regex(@"^([-]{0,1}[0-9]+[;]{1}[-]{0,1}[0-9]+)");
 
             Console.Write("Введите интервал, в котором необходимо вывести значения функции (через точку с запятой без пробелов):");
-            do
+
+            string intervalReaded = Console.ReadLine();
+
+            while (!intervalFormat.IsMatch(intervalReaded))
             {
-                string intervalReaded = Console.ReadLine();
-
-                if (!intervalFormat.IsMatch(intervalReaded))
-                {
                     Console.WriteLine("Неверно введен интервал! Попробуйте еще раз.");
-                    correctData = false;
-                    continue;
-                }
-                else
+                intervalReaded = Console.ReadLine();
+            }
+            intervalString = intervalReaded.Split(';');
+            for (int i = 0; i < 2; i++)
                 {
-                    intervalString = intervalReaded.Split(';');
-                    for (int i = 0; i < 2; i++)
-                    {
-                        interval[i] = double.Parse(intervalString[i]);
-                    }
-                    correctData = true;
+                    interval[i] = double.Parse(intervalString[i]);
                 }
-
-            } while (!correctData);
-
             return interval;
         }
 
